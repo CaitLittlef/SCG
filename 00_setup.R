@@ -68,3 +68,17 @@ options(scipen=999)
 #####################################
 # Grab date for saving files
 currentDate <- Sys.Date()
+
+
+#####################################
+library(RColorBrewer)
+display.brewer.all()
+display.brewer.pal(7, "Set1")
+# palette <- brewer.pal(7, "Set1")
+
+display.brewer.all(colorblindFriendly = TRUE)
+display.brewer.pal(8, "Dark2")
+display.brewer.pal(8, "RdYlBu")
+palette <- brewer.pal(8, "Dark2")
+palette <- brewer.pal(8, "Set2")
+palette <- brewer.pal(8, "RdYlBu")
