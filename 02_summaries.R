@@ -11,12 +11,12 @@ data <- data %>%
 
 
 # Just slect 1 year and sum area-weighted to get SCG-wide t_C_per_cord
-scg_ar_mt_C_per_cord <- sum(data[data$year == 2018,]$ct_avg_ar_mt_C_per_cord) #0.8590868
+scg_ar_mt_C_per_cord <- sum(data[data$year == 2018,]$ct_avg_ar_mt_C_per_cord) #0.8225541
 # sum(data[data$year == 2018,]$prop_ttl_area_ac)
 
 
-# Annually, carbon removals in merchantable volume amount to...
-scg_ar_mt_C_per_cord * 3000 # =2577.261 metric tons
+# Annually (BUT REMEMBER DECADAL DATA-PTS) carbon removals in merchantable volume amount to...
+scg_ar_mt_C_per_cord * 3000 # =2467.662 metric tons
 
 
 # Summarise stocks across cover types
@@ -33,15 +33,27 @@ zoo <- ct_summ %>%
 
 
 
-# Summarise stocks for entire SCG, convert to CO2e, add annual removals (*10 b/c 10-yr timestep.
+# Summarise stocks for entire SCG, convert to CO2e, add annual removals (*10 b/c 10-yr timestep).
 scg_summ <- ct_summ %>%
   group_by(year) %>%
-  summarise(scg_ann_all_mtC = sum(ct_ann_all_mtC),
+  summarise(scg_ann_all_mtC = sum(ct_ann_all_mtC), 
             scg_ann_ag_bg_mtC = sum(ct_ann_ag_bg_mtC),
+            
+            # What's decade-scale removal in C?
+            scg_10yr_rem_mtC = scg_ar_mt_C_per_cord * 3000*10,
+            
+            # Subtract that removal in C from all stocks and agbg
+            scg_ann_all_mtC_rem = scg_ann_all_mtC - scg_10yr_rem_mtC,
+            scg_ann_ag_bg_mtC_rem = scg_ann_ag_bg_mtC - scg_10yr_rem_mtC,
+            
+            # convert those mtC parcel-wide stocks to CO2e
             scg_ann_all_mtCO2e = scg_ann_all_mtC * 3.667,
             scg_ann_ag_bg_mtCO2e = scg_ann_ag_bg_mtC * 3.667,
-            scg_10yr_rem_mtC = scg_ar_mt_C_per_cord * 3000*10,
+            
+            # What's decade-scale removal in CO2e 
             scg_10yr_rem_mtCO2e = scg_ar_mt_C_per_cord * 3000*10 * 3.667,
+            
+            # Subtract that removal in CO2e from all stocks and agbg
             scg_ann_all_mtCO2e_rem = scg_ann_all_mtCO2e - scg_10yr_rem_mtCO2e,
             scg_ann_ag_bg_mtCO2e_rem = scg_ann_ag_bg_mtCO2e - scg_10yr_rem_mtCO2e) %>%
   ungroup()
@@ -51,8 +63,10 @@ scg_summ <- ct_summ %>%
 # What's annual increment of CO2 stored?
 # Weird stuff happens to downed wood in first decade -- use long-term. 
 yr <- max(scg_summ$year) - min(scg_summ$year)
-(scg_summ[scg_summ$year == 2108,]$scg_ann_all_mtCO2e - scg_summ[scg_summ$year == 2018,]$scg_ann_all_mtCO2e)/yr
-(scg_summ[scg_summ$year == 2108,]$scg_ann_ag_bg_mtCO2e - scg_summ[scg_summ$year == 2018,]$scg_ann_ag_bg_mtCO2e)/yr
+(scg_summ[scg_summ$year == 2118,]$scg_ann_all_mtCO2e - scg_summ[scg_summ$year == 2018,]$scg_ann_all_mtCO2e)/yr
+# 35686.09
+(scg_summ[scg_summ$year == 2118,]$scg_ann_ag_bg_mtCO2e - scg_summ[scg_summ$year == 2018,]$scg_ann_ag_bg_mtCO2e)/yr
+# 33390.97
 
 
 # What's average per acre?
