@@ -3,11 +3,15 @@ palette <- brewer.pal(8, "Dark2")
 
 
 
-# Gather data, make sure factors are in proper order
+# Gather data, remove mtC and removal vals.
+colnames(scg_summ)
 boo <- scg_summ %>%
   dplyr::select(-scg_ann_all_mtC, -scg_ann_ag_bg_mtC,
-                -scg_ann_rem_mtC, -scg_ann_rem_mtCO2e) %>%
+                -scg_10yr_rem_mtC,
+                -scg_ann_all_mtC_rem, -scg_ann_ag_bg_mtC_rem,
+                -scg_10yr_rem_mtCO2e) %>%
   gather(key = "cat", value = "mtCO2e", -year)
+# Make sure factors are in proper order
 boo$cat <- factor(boo$cat,
                   levels = c("scg_ann_all_mtCO2e",
                              "scg_ann_all_mtCO2e_rem",
