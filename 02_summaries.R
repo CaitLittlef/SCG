@@ -59,6 +59,13 @@ scg_summ <- ct_summ %>%
   ungroup()
            
 
+# What's total mtC and mtCO2e stored?
+sum(scg_summ[scg_summ$year == 2018,]$scg_ann_all_mtC) #1052374
+sum(scg_summ[scg_summ$year == 2018,]$scg_ann_ag_bg_mtC) #761363.4
+sum(scg_summ[scg_summ$year == 2018,]$scg_ann_all_mtCO2e) #3859056
+sum(scg_summ[scg_summ$year == 2018,]$scg_ann_ag_bg_mtCO2e) #2791920
+
+
 
 # What's annual increment of CO2 stored?
 # Weird stuff happens to downed wood in first decade -- use long-term. 

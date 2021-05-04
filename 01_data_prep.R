@@ -65,4 +65,15 @@ temp <- data %>%
   # view()
 # The ratios differ subtly over time, even within covertypes. NBD.
 
+
+# Export as look-up for other proj (e.g., SPNHF carbon estimates)
+temp <- data
+temp$mt_C_per_merch_cord <- temp$mt_C_per_cord ; temp$mt_C_per_cord <- NULL # be clear this is merch cords
+temp <- temp %>%
+  filter(year == 2018, !covertype == "Other") %>%
+  mutate(type = ifelse(left(covertype, 1) == "H", "hw",
+                        ifelse(left(covertype, 1) == "S", "sw", "mixed"))) %>%
+  mutate(mt_C_per_merch_cuft = ag_merch_l_mt_ac_C/merch_cuft) %>%
+  dplyr::select(type, merch_cuft, merch_cords, ag_merch_l_mt_ac_C, mt_C_per_merch_cuft, mt_C_per_merch_cord)
+write.csv(temp, paste0(out.dir,"lu_C_SGC.csv"))
 rm(temp)
